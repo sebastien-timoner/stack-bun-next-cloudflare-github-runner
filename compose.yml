@@ -1,0 +1,37 @@
+services:
+  web:
+    build:
+      context: services/web
+      dockerfile: Dockerfile
+    environment:
+      - GIT_REPO=${GIT_REPO}
+      - GIT_SSH_KEY=${GIT_SSH_KEY}
+    volumes:
+      - app_data:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app_network
+
+  cloudflare:
+    image: cloudflare/cloudflared:2025.10.0
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: unless-stopped
+    depends_on:
+      - web
+    networks:
+      - app_network
+
+volumes:
+  app_data:
+
+networks:
+  app_network:
+    driver: bridge

@@ -1,0 +1,46 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    # Uses self-hosted runner from your stack
+    runs-on: [self-hosted]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Display environment
+        run: |
+          echo "Runner: $(hostname)"
+          echo "OS: $(uname -s)"
+          echo "Architecture: $(uname -m)"
+          echo "Working directory: $(pwd)"
+
+      - name: Deploy application
+        run: |
+          echo "Starting deployment..."
+          docker compose exec -T web /deploy.sh "${{ secrets.GIT_REPO }}"
+
+      - name: Verify deployment
+        run: |
+          docker compose exec -T web /app/current/package.json
+          curl -f http://localhost:3000 || exit 1
+
+      - name: Notify success
+        if: success()
+        run: |
+          echo "✓ Deployment completed successfully"
+          echo "Application is now running with the latest code"
+
+      - name: Notify failure
+        if: failure()
+        run: |
+          echo "✗ Deployment failed"
+          echo "Please check the logs above for details"
+          exit 1

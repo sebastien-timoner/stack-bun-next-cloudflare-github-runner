@@ -1,0 +1,38 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# SSH Keys
+.ssh/id_ed25519
+.ssh/id_*
+!.ssh/id_*.pub
+!.ssh/README.md
+
+# Node/Bun
+node_modules
+dist
+build
+*.tgz
+.bun
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# GitHub Runner
+.github-runner/
+
+# OS
+.DS_Store
+Thumbs.db
+/.ssh/id_ed25519.pub
