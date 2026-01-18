@@ -56,12 +56,12 @@ cleanup_old_releases() {
     log "Nettoyage des anciennes releases..."
 
     # Lister les releases triées par numéro (décroissant)
-    releases=$(find "$RELEASES_DIR" -maxdepth 1 -type d -name '[0-9]*' | sort -rn)
+    releases=$(find "$RELEASES_DIR" -maxdepth 1 -type d -name '[0-9]*' -printf '%f\n' | sort -rn)
     count=0
 
-    for release_dir in $releases; do
+    for release_num in $releases; do
         count=$((count + 1))
-        release_num=$(basename "$release_dir")
+        release_dir="$RELEASES_DIR/$release_num"
 
         if [ $count -gt $MAX_RELEASES ]; then
             log "Suppression de la release ${release_num}..."
